@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RqinerPerformanceTest": {
+      "commandName": "Project",
+      "commandLineArgs": "--miners=\"C:\\Users\\Nikos\\Desktop\\QUBIC\\rqiner\" --duration=00:00:10"
+    }
+  }
+}

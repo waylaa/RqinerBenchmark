@@ -1,3 +1,5 @@
+[![Build and Release](https://github.com/waylaa/RqinerBenchmark/actions/workflows/dotnet.yml/badge.svg)](https://github.com/waylaa/RqinerBenchmark/actions/workflows/dotnet.yml)
+
 # RqinerBenchmark
 A small console program for automating
 [rqiner](https://github.com/Qubic-Solutions/rqiner-builds) benchmarks. Mainly

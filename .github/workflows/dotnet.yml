@@ -1,0 +1,73 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  windows_build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build for Windows (x64)
+      run: dotnet publish -c Release
+
+    - name: Upload x64 Release
+      uses: actions/upload-artifact@v4
+      with:
+        name: Release (Windows)
+        path: D:\a\RqinerBenchmark\RqinerBenchmark\RqinerBenchmark\bin\Release\net8.0\win-x64\publish\
+
+  macos_build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install required dependencies for AOT publishing
+      run: brew install binutils
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build for MacOS (x64)
+      run: dotnet publish -c Release
+      
+    - name: Upload Release
+      uses: actions/upload-artifact@v4
+      with:
+        name: Release (MacOS)
+        path: /Users/runner/work/RqinerBenchmark/RqinerBenchmark/RqinerBenchmark/bin/Release/net8.0/osx-x64/publish/
+
+  linux_build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build for Linux (x64)
+      run: dotnet publish -c Release
+
+    - name: Upload x64 Release
+      uses: actions/upload-artifact@v4
+      with:
+        name: Release (Linux)
+        path: /home/runner/work/RqinerBenchmark/RqinerBenchmark/RqinerBenchmark/bin/Release/net8.0/linux-x64/publish/

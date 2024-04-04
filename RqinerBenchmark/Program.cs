@@ -6,9 +6,12 @@ namespace RqinerBenchmark;
 
 internal sealed class Program
 {
-    /// <param name="miners">The directory of every rqiner variant.</param>
+    /// <summary></summary>
+    /// <param name="miners">The directory containing rqiner variants.</param>
+    /// <param name="threads">The amount of threads to use.</param>
     /// <param name="duration">The duration of each benchmark. The format is '00:00:00' (hours:minutes:seconds).</param>
-    private static Task Main(DirectoryInfo miners, TimeSpan duration)
+    /// <returns></returns>
+    private static Task Main(DirectoryInfo miners, int threads, TimeSpan duration)
     {
         Console.Title = "Rqiner Benchmark";
 
@@ -17,7 +20,7 @@ internal sealed class Program
             .ConfigureServices(services =>
             {
                 services.Configure<ConsoleLifetimeOptions>(options => options.SuppressStatusMessages = true);
-                services.AddHostedService(x => new BenchmarkService(miners, duration));
+                services.AddHostedService(x => new BenchmarkService(miners, threads, duration));
             })
             .RunConsoleAsync();
     }

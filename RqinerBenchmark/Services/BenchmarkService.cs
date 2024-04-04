@@ -4,12 +4,45 @@ using System.Diagnostics;
 
 namespace RqinerBenchmark.Services;
 
-internal sealed class BenchmarkService(DirectoryInfo miners, TimeSpan duration) : BackgroundService
+internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSpan duration) : BackgroundService
 {
     private static readonly Dictionary<string, string> _results = [];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        try
+        {
+            if (!miners.Exists)
+            {
+                AnsiConsole.MarkupLine(ToRedText("Directory does not exist."));
+                return;
+            }
+
+            miners.GetAccessControl();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            AnsiConsole.MarkupLine(ToRedText("Access to the specified directory is unauthorized."));
+        }
+
+        if (threads < 1 || threads > Environment.ProcessorCount)
+        {
+            AnsiConsole.MarkupLine(ToRedText($"Invalid thread count. Actual range is 1 - {Environment.ProcessorCount}"));
+            return;
+        }
+
+        if (duration == TimeSpan.Zero)
+        {
+            AnsiConsole.MarkupLine(ToRedText("Invalid duration. Make sure its format is as follows: 00:00:00 (hours:minutes:seconds)"));
+            return;
+        }
+
+        if (duration.Seconds < 10)
+        {
+            AnsiConsole.MarkupLine(ToRedText("A minimum of 10 seconds is allowed for benchmarking."));
+            return;
+        }
+
         foreach (FileInfo miner in miners.EnumerateFiles("*.exe").Where(x => x.Name.Contains("rqiner")))
         {
             string name = Path.GetFileNameWithoutExtension(miner.Name);
@@ -17,7 +50,7 @@ internal sealed class BenchmarkService(DirectoryInfo miners, TimeSpan duration) 
 
             using Process process = new();
             process.StartInfo.FileName = miner.FullName;
-            process.StartInfo.Arguments = $"--threads {Environment.ProcessorCount / 2} --bench";
+            process.StartInfo.Arguments = $"--threads {threads} --bench";
             process.StartInfo.RedirectStandardError = true;
             process.Start();
 
@@ -70,8 +103,11 @@ internal sealed class BenchmarkService(DirectoryInfo miners, TimeSpan duration) 
 
         AnsiConsole.Write(performanceTable);
         AnsiConsole.WriteLine("You can now close this window.");
-    }
 
-    private static string ToGreenText(string value)
-        => $"[green]{value}[/]";
+        static string ToGreenText(string value)
+            => $"[green]{value}[/]";
+
+        static string ToRedText(string value)
+            => $"[red]{value}[/]";
+    }
 }

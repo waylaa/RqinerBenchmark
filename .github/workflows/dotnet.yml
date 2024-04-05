@@ -18,10 +18,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Build for Windows (x64)
-      run: dotnet publish -c Release
+    - name: Publish
+      run: dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained
 
-    - name: Upload x64 Release
+    - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: rqiner-benchmark-win
@@ -39,10 +39,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Build for MacOS (x64)
-      run: dotnet publish -c Release
+    - name: Publish
+      run: dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained
       
-    - name: Upload Release
+    - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: rqiner-benchmark-macos
@@ -60,10 +60,10 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Build for Linux (x64)
-      run: dotnet publish -c Release
+    - name: Publish
+      run: dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained
 
-    - name: Upload x64 Release
+    - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: rqiner-benchmark-linux

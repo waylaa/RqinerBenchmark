@@ -68,6 +68,14 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
 
             string output = await process.StandardError.ReadToEndAsync(stoppingToken);
 
+            if (string.IsNullOrWhiteSpace(output) || !output.Contains("Average(10):"))
+            {
+                _results.Add(name, "0.0");
+                AnsiConsole.MarkupLine(ToGreenText("DONE"));
+
+                continue;
+            }
+
             ReadOnlyMemory<char> average = output
                 .Split('\n')
                 .Where(log => log.Any(char.IsDigit)) // Discard any log that is empty.

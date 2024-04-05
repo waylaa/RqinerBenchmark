@@ -24,7 +24,7 @@ jobs:
     - name: Upload x64 Release
       uses: actions/upload-artifact@v4
       with:
-        name: Release (Windows)
+        name: rqiner-benchmark-win
         path: D:\a\RqinerBenchmark\RqinerBenchmark\RqinerBenchmark\bin\Release\net8.0\win-x64\publish\
 
   macos_build:
@@ -33,9 +33,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Install required dependencies for AOT publishing
-      run: brew install binutils
 
     - name: Set up .NET
       uses: actions/setup-dotnet@v4
@@ -48,7 +45,7 @@ jobs:
     - name: Upload Release
       uses: actions/upload-artifact@v4
       with:
-        name: Release (MacOS)
+        name: rqiner-benchmark-macos
         path: /Users/runner/work/RqinerBenchmark/RqinerBenchmark/RqinerBenchmark/bin/Release/net8.0/osx-x64/publish/
 
   linux_build:
@@ -69,5 +66,5 @@ jobs:
     - name: Upload x64 Release
       uses: actions/upload-artifact@v4
       with:
-        name: Release (Linux)
+        name: rqiner-benchmark-linux
         path: /home/runner/work/RqinerBenchmark/RqinerBenchmark/RqinerBenchmark/bin/Release/net8.0/linux-x64/publish/

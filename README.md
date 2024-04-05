@@ -13,19 +13,19 @@ created for selecting a variant of the miner with the best performance (it/s).
 2. Open your preferred terminal and run the appropriate command from below.
    
 ⚠️ Make sure to change the values of the arguments below. '--miners' must point
-to a folder containing the miner executables and '--duration' must specify a
-time format like this: 'hours:minutes:seconds'. A 'help' command is also
+to a folder containing the miner executables, '--threads' is the amount of threads that will be used by the benchmark
+and '--duration' must specify a time format like this: 'hours:minutes:seconds'. Minimum duration allowed is 10 seconds. A 'help' command is also
 included by specifying only '--help' or -h'.
 
 ### Windows
 
 ```
-.\RqinerBenchmark.exe --miners="folder/path/to/rqiner/variants" --duration=00:00:00
+.\RqinerBenchmark.exe --miners "folder/path/to/rqiner/variants" --threads 420 --duration 00:00:00
 ```
 
 ### MacOS/Linux
 ```
-.\RqinerBenchmark --miners="folder/path/to/rqiner/variants" --duration=00:00:00
+.\RqinerBenchmark --miners "folder/path/to/rqiner/variants" --threads 420 --duration 00:00:00
 ```
 
 ## Building/Contributing

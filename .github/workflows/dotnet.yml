@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Publish
-      run: dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained
+      run: dotnet publish -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=false --self-contained
 
     - name: Upload
       uses: actions/upload-artifact@v4
@@ -40,7 +40,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Publish
-      run: dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained
+      run: dotnet publish -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=false --self-contained
       
     - name: Upload
       uses: actions/upload-artifact@v4
@@ -61,7 +61,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Publish
-      run: dotnet publish -c Release -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained
+      run: dotnet publish -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=false --self-contained
 
     - name: Upload
       uses: actions/upload-artifact@v4

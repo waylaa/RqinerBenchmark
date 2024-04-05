@@ -6,23 +6,14 @@ namespace RqinerBenchmark.Services;
 
 internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSpan duration) : BackgroundService
 {
-    private static readonly Dictionary<string, string> _results = [];
+    private static readonly Dictionary<string, double> _results = [];
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        try
+        if (!miners.Exists)
         {
-            if (!miners.Exists)
-            {
-                AnsiConsole.MarkupLine(ToRedText("Directory does not exist."));
-                return;
-            }
-
-            miners.GetAccessControl();
-        }
-        catch (UnauthorizedAccessException)
-        {
-            AnsiConsole.MarkupLine(ToRedText("Access to the specified directory is unauthorized."));
+            AnsiConsole.MarkupLine(ToRedText("Directory does not exist."));
+            return;
         }
 
         if (threads < 1 || threads > Environment.ProcessorCount)
@@ -70,7 +61,7 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
 
             if (string.IsNullOrWhiteSpace(output) || !output.Contains("Average(10):"))
             {
-                _results.Add(name, "0.0");
+                _results.Add(name, 0.0);
                 AnsiConsole.MarkupLine(ToGreenText("DONE"));
 
                 continue;
@@ -88,16 +79,16 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
                 .Aggregate((x1, x2) => x1 + x2) // Join every digit (and dot) together.
                 .AsMemory();
 
-            _results.Add(name, average.Span.ToString());
+            _results.Add(name, double.Parse(average.Span));
             AnsiConsole.MarkupLine(ToGreenText("DONE"));
         }
 
         Table performanceTable = new();
         performanceTable.AddColumns("Miner", "Performance");
 
-        string bestPerformance = _results.Values.Max()!;
+        double bestPerformance = _results.Values.Max();
 
-        foreach (KeyValuePair<string, string> result in _results)
+        foreach (KeyValuePair<string, double> result in _results)
         {
             if (result.Value == bestPerformance)
             {

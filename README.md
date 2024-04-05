@@ -14,7 +14,7 @@ created for selecting a variant of the miner with the best performance (it/s).
    
 ⚠️ Make sure to change the values of the arguments below. '--miners' must point
 to a folder containing the miner executables, '--threads' is the amount of threads that will be used by the benchmark
-and '--duration' must specify a time format like this: 'hours:minutes:seconds'. A 'help' command is also
+and '--duration' must specify a time format like this: 'hours:minutes:seconds'. Minimum duration allowed is 10 seconds. A 'help' command is also
 included by specifying only '--help' or -h'.
 
 ### Windows

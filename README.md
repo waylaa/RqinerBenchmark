@@ -31,7 +31,6 @@ included by specifying only '--help' or -h'.
 ## Building/Contributing
 ### 1. Prerequisites (Visual Studio Installer)
   - .NET desktop development
-  - Desktop development with C++ **(For AOT compilation)**
     
 ### 2. Install .NET 8
 - Make sure you have .NET 8 installed on your machine.

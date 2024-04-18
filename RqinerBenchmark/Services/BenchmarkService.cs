@@ -12,25 +12,25 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
     {
         if (!miners.Exists)
         {
-            AnsiConsole.MarkupLine(ToRedText("Directory does not exist."));
+            AnsiConsole.MarkupLine(WriteError("Directory does not exist."));
             return;
         }
 
         if (threads < 1 || threads > Environment.ProcessorCount)
         {
-            AnsiConsole.MarkupLine(ToRedText($"Invalid thread count. Actual range is 1 - {Environment.ProcessorCount}"));
+            AnsiConsole.MarkupLine(WriteError($"Invalid thread count. Actual range is 1 - {Environment.ProcessorCount}"));
             return;
         }
 
         if (duration == TimeSpan.Zero)
         {
-            AnsiConsole.MarkupLine(ToRedText("Invalid duration. Make sure its format is as follows: 00:00:00 (hours:minutes:seconds)"));
+            AnsiConsole.MarkupLine(WriteError("Invalid duration. Make sure its format is as follows: 00:00:00 (hours:minutes:seconds)"));
             return;
         }
-
-        if (duration.Seconds < 10)
+        
+        if (duration == TimeSpan.FromSeconds(10))
         {
-            AnsiConsole.MarkupLine(ToRedText("A minimum of 10 seconds is allowed for benchmarking."));
+            AnsiConsole.MarkupLine(WriteError("A minimum of 10 seconds is allowed for benchmarking."));
             return;
         }
 
@@ -46,11 +46,11 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
             process.Start();
 
             using CancellationTokenSource timeout = new(duration);
-            using CancellationTokenSource linked = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, timeout.Token);
+            using CancellationTokenSource stoppingTokenAndTimeout = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, timeout.Token);
 
             try
             {
-                await process.WaitForExitAsync(linked.Token);
+                await process.WaitForExitAsync(stoppingTokenAndTimeout.Token);
             }
             catch
             {
@@ -59,15 +59,15 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
 
             string output = await process.StandardError.ReadToEndAsync(stoppingToken);
 
-            if (string.IsNullOrWhiteSpace(output) || !output.Contains("Average(10):"))
+            if (!output.Contains("Average(10):"))
             {
                 _results.Add(name, 0.0);
-                AnsiConsole.MarkupLine(ToGreenText("DONE"));
+                AnsiConsole.MarkupLine(WriteError("DNF"));
 
                 continue;
             }
 
-            ReadOnlyMemory<char> average = output
+            string averageIts = output
                 .Split('\n')
                 .Where(log => log.Any(char.IsDigit)) // Discard any log that is empty.
                 .Last() // Get the last log message containing the latest average it/s.
@@ -76,11 +76,10 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
                 .Skip("  Average(10):".Length)
                 .TakeWhile(x => x == '.' || char.IsDigit(x)) // Get the value of the average it/s and discard all other characters.
                 .Select(x => x.ToString())
-                .Aggregate((x1, x2) => x1 + x2) // Join every digit (and dot) together.
-                .AsMemory();
+                .Aggregate((x1, x2) => x1 + x2); // Join every digit (and dot) together.
 
-            _results.Add(name, double.Parse(average.Span));
-            AnsiConsole.MarkupLine(ToGreenText("DONE"));
+            _results.Add(name, double.Parse(averageIts));
+            AnsiConsole.MarkupLine(WriteSuccessful("DONE"));
         }
 
         Table performanceTable = new();
@@ -92,7 +91,7 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
         {
             if (result.Value == bestPerformance)
             {
-                performanceTable.AddRow(result.Key, ToGreenText($"{result.Value} it/s"));
+                performanceTable.AddRow(result.Key, WriteSuccessful($"{result.Value} it/s"));
             }
             else
             {
@@ -103,10 +102,7 @@ internal sealed class BenchmarkService(DirectoryInfo miners, int threads, TimeSp
         AnsiConsole.Write(performanceTable);
         AnsiConsole.WriteLine("You can now close this window.");
 
-        static string ToGreenText(string value)
-            => $"[green]{value}[/]";
-
-        static string ToRedText(string value)
-            => $"[red]{value}[/]";
+        static string WriteSuccessful(string value) => $"[green]{value}[/]";
+        static string WriteError(string value) => $"[red]{value}[/]";
     }
 }

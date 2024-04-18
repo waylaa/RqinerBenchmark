@@ -12,7 +12,7 @@ created for selecting a variant of the miner with the best performance (it/s).
 [Releases](https://github.com/waylaa/RqinerBenchmark/releases) page.
 2. Open your preferred terminal and run the appropriate command from below.
    
-⚠️ Make sure to change the values of the arguments below. '--miners' must point
+⚠️ Make sure to change the values of the given argument examples below. '--miners' must point
 to a folder containing the miner executables, '--threads' is the amount of threads that will be used by the benchmark
 and '--duration' must specify a time format like this: 'hours:minutes:seconds'. Minimum duration allowed is 10 seconds. A 'help' command is also
 included by specifying only '--help' or -h'.

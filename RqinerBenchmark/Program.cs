@@ -8,10 +8,11 @@ internal sealed class Program
 {
     /// <summary></summary>
     /// <param name="miners">The directory containing rqiner variants.</param>
+    /// <param name="id">The payoud ID.</param>
     /// <param name="threads">The amount of threads to use.</param>
     /// <param name="duration">The duration of each benchmark. The format is '00:00:00' (hours:minutes:seconds).</param>
     /// <returns></returns>
-    private static Task Main(DirectoryInfo miners, int threads, TimeSpan duration)
+    private static Task Main(DirectoryInfo miners, string id, string label, int threads, TimeSpan duration)
     {
         Console.Title = "Rqiner Benchmark";
 
@@ -19,8 +20,9 @@ internal sealed class Program
             .CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
-                services.Configure<ConsoleLifetimeOptions>(options => options.SuppressStatusMessages = true);
-                services.AddHostedService(x => new BenchmarkService(miners, threads, duration));
+                services
+                .Configure<ConsoleLifetimeOptions>(options => options.SuppressStatusMessages = true)
+                .AddHostedService(x => new BenchmarkService(miners, id, label, threads, duration));
             })
             .RunConsoleAsync();
     }
